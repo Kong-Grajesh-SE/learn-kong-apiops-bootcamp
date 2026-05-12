@@ -29,13 +29,13 @@ export default defineConfig({
   ],
 
   head: [
-    ['link', { rel: 'icon',           href: '/learn-apiops/favicon.png', type: 'image/png', sizes: '32x32' }],
-    ['link', { rel: 'shortcut icon',  href: '/learn-apiops/favicon.png', type: 'image/png' }],
-    ['link', { rel: 'apple-touch-icon', href: '/learn-apiops/favicon.png' }],
+    ['link', { rel: 'icon',           href: '/learn-kong-apiops-bootcamp/favicon.png', type: 'image/png', sizes: '32x32' }],
+    ['link', { rel: 'shortcut icon',  href: '/learn-kong-apiops-bootcamp/favicon.png', type: 'image/png' }],
+    ['link', { rel: 'apple-touch-icon', href: '/learn-kong-apiops-bootcamp/favicon.png' }],
     ['meta', { name: 'theme-color', content: '#000F06' }],
     ['meta', { property: 'og:title', content: 'Kong APIOps Bootcamp' }],
     ['meta', { property: 'og:description', content: 'Hands-on APIOps: decK GitOps, GitHub Actions CI/CD, declarative config' }],
-    ['meta', { property: 'og:image', content: '/learn-apiops/kong-gateway-logo.svg' }],
+    ['meta', { property: 'og:image', content: '/learn-kong-apiops-bootcamp/kong-gateway-logo.svg' }],
   ],
 
   markdown: {
