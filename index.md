@@ -6,7 +6,7 @@ hero:
   text: "Bootcamp"
   tagline: "Git is the source of truth. decK syncs Kong state declaratively. GitHub Actions validates on PRs and deploys on merge."
   image:
-    src: /kong-gateway-logo.svg
+    src: /kong-logomark-lime.svg
     alt: Kong APIOps
   actions:
     - theme: brand
