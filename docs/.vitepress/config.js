@@ -8,7 +8,7 @@ export default defineConfig({
   outDir: '../dist',
   cacheDir: '../.vitepress-cache',
 
-  base: '/learn-apiops/',
+  base: '/learn-kong-apiops-bootcamp/',
 
   appearance: 'force-dark',
   cleanUrls: true,
