@@ -57,6 +57,17 @@ export default defineConfig({
         ],
       },
       {
+        text: '🚀 Specialist Bootcamps',
+        items: [
+          { text: '🏗️ API Gateway Bootcamp',  link: 'https://kong-grajesh-se.github.io/learn-kong-gateway/', target: '_blank' },
+          { text: '🤖 AI Gateway Bootcamp',    link: 'https://kong-grajesh-se.github.io/learn-kong-ai-gateway/', target: '_blank' },
+          { text: '🛠️ Agentic AI & MCP',       link: 'https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/', target: '_blank' },
+          { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-kong-dev-portal/', target: '_blank' },
+          { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
+          { text: '🤝 Bring Your Own Agent',   link: 'https://kong-grajesh-se.github.io/bring-your-own-agent/', target: '_blank' },
+        ],
+      },
+      {
         text: '🔗 Resources',
         items: [
           { text: '📖 decK Docs',    link: 'https://developer.konghq.com/deck/', target: '_blank' },
@@ -73,6 +84,18 @@ export default defineConfig({
         items: [
           { text: '📋 Overview',        link: '/module-01-apiops/' },
           { text: '🔄 Lab: decK & CI/CD', link: '/module-01-apiops/labs/09-deck-cicd' },
+        ],
+      },
+      {
+        text: '🚀 Specialist Bootcamps',
+        collapsed: false,
+        items: [
+          { text: '🏗️ API Gateway Bootcamp',  link: 'https://kong-grajesh-se.github.io/learn-kong-gateway/', target: '_blank' },
+          { text: '🤖 AI Gateway Bootcamp',    link: 'https://kong-grajesh-se.github.io/learn-kong-ai-gateway/', target: '_blank' },
+          { text: '🛠️ Agentic AI & MCP',       link: 'https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/', target: '_blank' },
+          { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-kong-dev-portal/', target: '_blank' },
+          { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
+          { text: '🤝 Bring Your Own Agent',   link: 'https://kong-grajesh-se.github.io/bring-your-own-agent/', target: '_blank' },
         ],
       },
     ],
