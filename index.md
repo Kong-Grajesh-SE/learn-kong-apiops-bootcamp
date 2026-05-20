@@ -24,5 +24,5 @@ features:
     title: "01 - decK GitOps & CI/CD"
     details: "Implement a full GitOps pipeline for Kong config. Repository structure, sync scripts, GitHub Actions PR validation, and multi-environment deployment. ~90 min."
     link: /module-01-apiops/
-    linkText: Start module →
+    linkText: Start module
 ---

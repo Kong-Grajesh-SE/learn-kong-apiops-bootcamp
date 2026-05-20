@@ -115,7 +115,7 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern: 'https://github.com/Kong-Grajesh-SE/learn-apiops/edit/main/:path',
+      pattern: 'https://github.com/Kong-Grajesh-SE/learn-kong-apiops-bootcamp/edit/main/:path',
       text: 'Edit this page on GitHub',
     },
 
@@ -125,7 +125,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Kong-Grajesh-SE/learn-apiops' },
+      { icon: 'github', link: 'https://github.com/Kong-Grajesh-SE/learn-kong-apiops-bootcamp' },
     ],
 
     footer: {
