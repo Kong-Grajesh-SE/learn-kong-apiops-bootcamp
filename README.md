@@ -1,16 +1,27 @@
 # Kong APIOps Bootcamp
 
-> **Git is the source of truth. decK syncs Kong state declaratively. GitHub Actions validates on PRs and deploys on merge.**
+![Kong Gateway 3.14+](https://img.shields.io/badge/Kong%20Gateway-3.14%2B-CCFF00?style=for-the-badge&labelColor=001408)
+![Platform: Konnect](https://img.shields.io/badge/Platform-Konnect-CCFF00?style=for-the-badge&labelColor=001408)
+![Modules: 1](https://img.shields.io/badge/Modules-1-CCFF00?style=for-the-badge&labelColor=001408)
+
+> ⚙️ **Requires Kong Gateway 3.14 or newer** and decK 1.43+.
 
 A hands-on bootcamp for implementing APIOps with Kong Gateway using declarative configuration, GitOps pipelines, and CI/CD automation.
 
-## What You'll Learn
+## Overview
 
-- **decK GitOps** — Full GitOps pipeline for Kong config. PRs trigger a diff preview; merges to main sync to Kong.
-- **GitHub Actions CI/CD** — Validate YAML on PR, diff against live config, sync on merge to main.
-- **Declarative Config** — Manage Kong objects (services, routes, plugins, consumers, upstreams) as version-controlled YAML.
-- **Multi-Environment Promotion** — Promote config from dev → staging → prod with environment-specific variable injection.
-- **Diff & Validate** — Use `deck diff` to preview changes and `deck validate` to catch errors before they reach production.
+| | |
+|---|---|
+| **Kong version** | **Kong Gateway 3.14+** |
+| **Format** | 1 module, 1 lab (~90 min) |
+| **Flow** | Repository structure → sync script → CI validation → CD deployment |
+| **Platform** | decK CLI + GitHub Actions → Kong Konnect |
+
+## Bootcamp Modules
+
+| # | Module | Key Topics |
+|---|---|---|
+| 01 | **APIOps with decK** | Declarative config, `deck diff`, `deck sync`, GitHub Actions CI/CD, multi-environment promotion |
 
 ## Modules
 
@@ -69,4 +80,4 @@ apiops-bootcamp/
 
 ## License
 
-Private — for internal training use.
+Private - for internal training use.

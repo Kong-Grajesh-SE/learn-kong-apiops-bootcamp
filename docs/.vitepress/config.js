@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Kong APIOps Bootcamp',
-  description: 'Kong Partner Enablement — APIOps with decK: GitOps, CI/CD pipelines, declarative config, and GitHub Actions for Kong Gateway.',
+  description: 'Kong Partner Enablement - APIOps with decK: GitOps, CI/CD pipelines, declarative config, and GitHub Actions for Kong Gateway.',
 
   srcDir: '..',
   outDir: '../dist',
@@ -50,10 +50,16 @@ export default defineConfig({
     nav: [
       { text: '🏠 Home', link: '/' },
       {
-        text: '📚 Module',
+        text: '🚀 Getting Started',
+        items: [
+          { text: '✅ Prerequisites', link: '/prerequisites' },
+        ],
+      },
+      {
+        text: '📚 Modules',
         items: [
           { text: '📋 Overview',          link: '/module-01-apiops/' },
-          { text: '🔄 decK & CI/CD',      link: '/module-01-apiops/labs/09-deck-cicd' },
+          { text: '🔄 decK & CI/CD',      link: '/module-01-apiops/labs/01-deck-cicd' },
         ],
       },
       {
@@ -65,6 +71,7 @@ export default defineConfig({
           { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-kong-dev-portal/', target: '_blank' },
           { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
           { text: '🤝 Bring Your Own Agent',   link: 'https://kong-grajesh-se.github.io/bring-your-own-agent/', target: '_blank' },
+          { text: '🌋 Volcano SDK Bootcamp',  link: 'https://kong-grajesh-se.github.io/learn-volcano-sdk/', target: '_blank' },
         ],
       },
       {
@@ -79,11 +86,18 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: '🔄 APIOps with decK',
+        text: '🚀 Getting Started',
+        collapsed: false,
+        items: [
+          { text: '✅ Prerequisites', link: '/prerequisites' },
+        ],
+      },
+      {
+        text: '🔄 Module 01 - APIOps with decK',
         collapsed: false,
         items: [
           { text: '📋 Overview',        link: '/module-01-apiops/' },
-          { text: '🔄 Lab: decK & CI/CD', link: '/module-01-apiops/labs/09-deck-cicd' },
+          { text: '🔄 Lab 01-A: decK & CI/CD', link: '/module-01-apiops/labs/01-deck-cicd' },
         ],
       },
       {
@@ -115,8 +129,8 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'Kong APIOps Bootcamp — Partner Enablement',
-      copyright: '© Kong Inc. 2026 — The AI Connectivity Company',
+      message: 'Kong APIOps Bootcamp - Partner Enablement',
+      copyright: '© Kong Inc. 2026 - The AI Connectivity Company',
     },
 
     search: { provider: 'local' },

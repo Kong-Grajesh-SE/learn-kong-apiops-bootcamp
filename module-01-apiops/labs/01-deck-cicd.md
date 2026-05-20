@@ -1,6 +1,22 @@
-# Lab 09-C - decK GitOps & CI/CD
+# Lab 01-A - decK GitOps & CI/CD
 
-> **Goal:** Implement a full GitOps pipeline for Kong configuration using decK and GitHub Actions. PRs trigger a diff preview; merges to main sync to Kong.
+> **Goal.** In ~90 minutes you'll implement a full GitOps pipeline for Kong configuration using decK and GitHub Actions. PRs trigger a diff preview; merges to main sync to Kong. Look for **✅ Checkpoint** markers after each step.
+
+---
+
+## Before you start
+
+```bash
+# Verify decK is installed
+deck version
+# decK v1.43+
+
+# Verify Konnect connectivity
+deck gateway ping --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name dev-control-plane
+```
+
+---
 
 ## GitOps Philosophy
 
@@ -34,7 +50,9 @@ kong-config/
     └── mytravel-upstream.yaml
 ```
 
-## Step 1 - Environment files
+## Step 1 - Environment files (5 min)
+
+Create the `kong-config/environments/` directory and add environment-specific connection details.
 
 `environments/dev.env`:
 ```bash
@@ -52,7 +70,13 @@ KONNECT_TOKEN=${KONNECT_TOKEN_PROD}
 CONTROL_PLANE=prod-control-plane
 ```
 
-## Step 2 - decK Sync Script
+**✅ Checkpoint.** Both `dev.env` and `prod.env` files exist with environment-specific variables.
+
+---
+
+## Step 2 - decK Sync Script (10 min)
+
+Create a reusable script that wraps `deck` commands with environment awareness.
 
 `scripts/deck-sync.sh`:
 
@@ -125,7 +149,20 @@ chmod +x scripts/deck-sync.sh
 ./scripts/deck-sync.sh dev sync
 ```
 
-## Step 3 - GitHub Actions: PR Validation
+**✅ Checkpoint.** Run `./scripts/deck-sync.sh dev validate` - all files should report valid.
+
+::: tip decK actions cheatsheet
+| Command | What it does |
+|---|---|
+| `deck file validate` | Checks YAML syntax - catches typos before they hit Kong |
+| `deck gateway diff` | Compares local YAML against live Kong - shows what would change |
+| `deck gateway sync` | Applies the diff - makes Kong match the YAML |
+| `deck gateway dump` | Exports live Kong state to a YAML file |
+:::
+
+---
+
+## Step 3 - GitHub Actions: PR Validation (15 min)
 
 `.github/workflows/validate.yml`:
 
@@ -191,7 +228,15 @@ jobs:
             });
 ```
 
-## Step 4 - GitHub Actions: Deploy on Merge
+**✅ Checkpoint.** Push this workflow to a branch, open a PR that changes a YAML file, and confirm the CI job runs (green check or diff comment on the PR).
+
+::: warning Keep secrets out of YAML
+Never put Konnect tokens or API keys directly in YAML files. Always use GitHub Secrets (e.g. `secrets.KONNECT_TOKEN_DEV`) and environment variables.
+:::
+
+---
+
+## Step 4 - GitHub Actions: Deploy on Merge (15 min)
 
 `.github/workflows/deploy.yml`:
 
@@ -276,7 +321,11 @@ jobs:
             kong-config/services/mytravel-api.yaml
 ```
 
-## Step 5 - Set GitHub Secrets
+**✅ Checkpoint.** Merge a PR to `main` and confirm the deploy pipeline runs: dev → staging → production (with manual approval gate on prod).
+
+---
+
+## Step 5 - Set GitHub Secrets (5 min)
 
 In your GitHub repo → Settings → Secrets → Actions:
 
@@ -286,7 +335,11 @@ In your GitHub repo → Settings → Secrets → Actions:
 | `KONNECT_TOKEN_STAGING` | Konnect PAT for staging |
 | `KONNECT_TOKEN_PROD` | Konnect PAT for production |
 
-## Step 6 - Promotion workflow
+**✅ Checkpoint.** All three secrets are set in GitHub → Settings → Secrets → Actions.
+
+---
+
+## Step 6 - Promotion workflow (10 min)
 
 ```bash
 # Make a config change
@@ -306,6 +359,10 @@ git push origin feat/add-weather-rate-limit
 #   3. Deploy to Production with manual approval gate
 ```
 
+**✅ Checkpoint.** The PR shows a diff comment. After merge, Kong's dev environment has the new rate-limiting plugin.
+
+---
+
 ## decK Best Practices
 
 | Practice | Why |
@@ -319,4 +376,6 @@ git push origin feat/add-weather-rate-limit
 
 ---
 
-*Next: [Lab 09-D - RBAC & Teams →](./09-rbac-teams)*
+---
+
+*Lab 01-A complete. [← Back to Module Overview](/module-01-apiops/)*

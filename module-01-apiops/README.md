@@ -1,72 +1,70 @@
-# Module 09 - Enterprise & CI/CD
+# Module 01 - APIOps with decK
 
-> Bring it all together: enterprise-grade identity with OIDC auth code flow, a public Developer Portal for API discovery, and a fully automated GitOps pipeline with decK and GitHub Actions.
+> **The scenario.** Your team has been configuring Kong manually - clicking through Kong Manager or running ad-hoc Admin API calls. Configuration drift between dev and production is constant. A junior engineer accidentally deleted a rate-limiting plugin in prod, and nobody noticed until customers complained.
+>
+> In the next ~2 hours you'll implement a GitOps workflow where Git is the single source of truth for all Kong configuration. PRs trigger automated validation and diff previews; merges to main deploy to dev → staging → production with quality gates at each stage.
 
-## Overview
+## What you'll have at the end
 
-| | |
-|---|---|
-| **Duration** | ~2.5 hours |
-| **Level** | Advanced |
-| **Stack** | Kong Gateway Enterprise, Keycloak, Konnect, decK, GitHub Actions |
-| **Outcome** | Production-ready gateway with SSO, Developer Portal, and automated CI/CD |
+- A `kong-config/` repository structure with per-service YAML, global plugins, and environment files
+- A `deck-sync.sh` script for local validate/diff/sync operations
+- A GitHub Actions PR workflow: `deck file validate` → `deck gateway diff` → comment on PR
+- A GitHub Actions deploy workflow: dev → staging → production (with manual approval gate)
+- Full promotion flow tested end-to-end
 
-## Learning Objectives
+## Who this module is for
 
-- Configure OIDC Authorization Code Flow end-to-end
-- Publish APIs to Kong's Developer Portal
-- Implement decK-based GitOps for Kong configuration
-- Set up GitHub Actions CI/CD with quality gates
+You have a Kong Konnect account with at least one control plane. You understand Services, Routes, and plugins from the API Gateway Bootcamp (or equivalent experience). decK CLI is installed locally.
 
-## Enterprise Feature Highlights
+```bash
+# Verify decK
+deck version
+# decK v1.43+
 
-| Feature | Description |
-|---|---|
-| **OIDC / OpenID Connect** | Enterprise SSO with any OIDC-compliant IdP |
-| **RBAC** | Role-based access control for Kong Manager |
-| **Developer Portal** | Self-service API catalog for external developers |
-| **Kong Konnect** | Managed control plane + analytics dashboard |
-| **decK GitOps** | Declarative config management, CI/CD integration |
-| **Audit Logs** | Full audit trail of all admin operations |
-| **Secrets Manager** | HashiCorp Vault, AWS Secrets Manager integration |
+# Verify Konnect connectivity
+deck gateway ping --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name dev-control-plane
+```
+
+## What you'll need
+
+| Tool | Purpose | Min Version |
+|---|---|---|
+| decK CLI | Declarative Kong configuration management | 1.43+ |
+| Git + GitHub | Version control and CI/CD hosting | - |
+| Kong Konnect | Cloud control plane (free tier works) | - |
+| jq | Parse JSON output | 1.6+ |
+
+## Three concepts you need today
+
+| Concept | What it is | Why it matters |
+|---|---|---|
+| **Declarative config** | Kong state described as YAML files under version control | No more manual clicks - every change is reviewable, auditable, and rollback-able |
+| **deck diff** | Compares local YAML against live Kong state and shows what would change | Prevents surprises - you see exactly what a sync will do before it runs |
+| **Environment promotion** | Same YAML, different environment variables (dev → staging → prod) | Ensures config consistency across environments with environment-specific overrides |
 
 ## Labs
 
-| Lab | Topic |
+| Lab | Topic | Time |
+|---|---|---|
+| [01-A: decK GitOps & CI/CD](/module-01-apiops/labs/01-deck-cicd) | Repository structure, sync script, GitHub Actions PR + deploy workflows | ~90 min |
+
+## Exit ticket
+
+1. What is the difference between `deck gateway diff` and `deck gateway sync`? When do you use each?
+2. Your PR workflow runs `deck file validate` but the diff still fails. What could cause this?
+3. The production deploy job requires `environment: production` with a manual approval gate. Where in GitHub is this configured?
+
+## Common pitfalls
+
+| Symptom | Likely cause |
 |---|---|
-| [09-A: OIDC Auth Code Flow](/module-09-enterprise/labs/09-oidc-auth-code) | Full browser-based SSO with Keycloak |
-| [09-B: Developer Portal](/module-09-enterprise/labs/09-dev-portal) | Publish APIs, manage teams, customise portal |
-| [09-C: decK & CI/CD](/module-09-enterprise/labs/09-deck-cicd) | GitHub Actions pipeline with quality gates |
-| [09-D: RBAC & Teams](/module-09-enterprise/labs/09-rbac-teams) | Kong Manager RBAC, consumer groups, team isolation |
-
-## decK GitOps Architecture
-
-```
-GitHub Repository (source of truth)
-    ├── kong-config/
-    │   ├── services/
-    │   │   ├── mytravel-api.yaml
-    │   │   ├── ai-gateway.yaml
-    │   │   └── mcp-services.yaml
-    │   ├── global/
-    │   │   ├── plugins.yaml
-    │   │   └── consumers.yaml
-    │   └── environments/
-    │       ├── dev.env
-    │       ├── staging.env
-    │       └── prod.env
-    └── .github/workflows/
-        ├── validate.yml       ← PR: lint + diff
-        └── deploy.yml         ← merge: sync to Kong
-```
-
-## Resources
-
-- [Kong Konnect](https://cloud.konghq.com/)
-- [Developer Portal docs](https://developer.konghq.com/dev-portal/)
-- [decK GitOps guide](https://developer.konghq.com/deck/)
-- [Kong RBAC](https://developer.konghq.com/gateway/kong-manager/rbac/)
+| `deck gateway diff` shows unexpected deletions | YAML files don't cover all Services - decK thinks missing ones should be deleted. Use `--select-tag` to scope |
+| Secrets appear in PR diff comments | Konnect token or API keys in YAML - use `deck file add-plugins` with `--select-tag` or environment variables |
+| Sync fails with "duplicate" error | Two YAML files define the same Service name - consolidate or use `--select-tag` |
+| CI passes but deploy fails | PR validated against dev but deploying to staging - schema differences between environments |
+| `_format_version` mismatch | YAML uses `'1.1'` but Kong 3.14 expects `'3.0'` |
 
 ---
 
-*Previous: [Module 08](/module-08-agentic-mcp/) · You've completed the bootcamp! 🎉*
+*[← Home](/) · End of APIOps Bootcamp*
