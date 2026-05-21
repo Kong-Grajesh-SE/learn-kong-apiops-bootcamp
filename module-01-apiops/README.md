@@ -1,69 +1,73 @@
 # Module 01 - APIOps with decK
 
-> **The scenario.** Your team has been configuring Kong manually - clicking through Kong Manager or running ad-hoc Admin API calls. Configuration drift between dev and production is constant. A junior engineer accidentally deleted a rate-limiting plugin in prod, and nobody noticed until customers complained.
->
-> In the next ~2 hours you'll implement a GitOps workflow where Git is the single source of truth for all Kong configuration. PRs trigger automated validation and diff previews; merges to main deploy to dev → staging → production with quality gates at each stage.
+> **Scenario.** You've built a working Kong deployment across the API Gateway, AI Gateway, and Agentic bootcamps. Services, routes, plugins, consumers, and upstreams are all running. But everything was configured through the Admin API or Kong Manager - there's no audit trail, no way to reproduce the setup, and no safety net. In this module you'll learn decK: the CLI that turns Kong configuration into versionable, diffable, deployable YAML files.
 
-## What you'll have at the end
+## Module outcomes
 
-- A `kong-config/` repository structure with per-service YAML, global plugins, and environment files
-- A `deck-sync.sh` script for local validate/diff/sync operations
-- A GitHub Actions PR workflow: `deck file validate` → `deck gateway diff` → comment on PR
-- A GitHub Actions deploy workflow: dev → staging → production (with manual approval gate)
-- Full promotion flow tested end-to-end
+By the end of this module, you will be able to:
 
-## Who this module is for
+- Capture live Kong state with `deck gateway dump`
+- Preview changes safely with `deck gateway diff`
+- Deploy config with `deck gateway sync` and `deck gateway apply`
+- Validate YAML offline with `deck file validate` and enforce governance with `deck file lint`
+- Convert OpenAPI specs to Kong config with `deck file openapi2kong`
+- Compose and manipulate config files with `deck file merge`, `render`, `patch`, and `add-plugins`
+- Use tags and `--select-tag` for multi-team ownership boundaries
 
-You have a Kong Konnect account with at least one control plane. You understand Services, Routes, and plugins from the API Gateway Bootcamp (or equivalent experience). decK CLI is installed locally.
+## Prerequisites
+
+You have completed (or are familiar with) the earlier bootcamps and have a running Kong Gateway with services, routes, and plugins configured.
 
 ```bash
 # Verify decK
 deck version
 # decK v1.43+
 
-# Verify Konnect connectivity
-deck gateway ping --konnect-token "$KONNECT_TOKEN" \
-  --konnect-control-plane-name dev-control-plane
+# Verify connectivity
+deck gateway ping --kong-addr http://localhost:8001
 ```
 
-## What you'll need
+## What you need
 
-| Tool | Purpose | Min Version |
+| Tool | Purpose | Minimum |
 |---|---|---|
-| decK CLI | Declarative Kong configuration management | 1.43+ |
-| Git + GitHub | Version control and CI/CD hosting | - |
-| Kong Konnect | Cloud control plane (free tier works) | - |
-| jq | Parse JSON output | 1.6+ |
-
-## Three concepts you need today
-
-| Concept | What it is | Why it matters |
-|---|---|---|
-| **Declarative config** | Kong state described as YAML files under version control | No more manual clicks - every change is reviewable, auditable, and rollback-able |
-| **deck diff** | Compares local YAML against live Kong state and shows what would change | Prevents surprises - you see exactly what a sync will do before it runs |
-| **Environment promotion** | Same YAML, different environment variables (dev → staging → prod) | Ensures config consistency across environments with environment-specific overrides |
+| decK CLI | Declarative Kong config management | 1.43+ |
+| Kong Gateway or Konnect | Running instance with existing config | 3.14+ |
+| jq | JSON inspection | 1.6+ |
 
 ## Labs
 
-| Lab | Topic | Time |
+| Lab | Focus | Time |
 |---|---|---|
-| [01-A: decK GitOps & CI/CD](/module-01-apiops/labs/01-deck-cicd) | Repository structure, sync script, GitHub Actions PR + deploy workflows | ~90 min |
+| [01 - deck gateway commands](/module-01-apiops/labs/01-deck-gateway) | `ping`, `dump`, `diff`, `sync`, `apply`, `validate`, `reset` | ~75 min |
+| [02 - deck file commands](/module-01-apiops/labs/02-deck-file) | `validate`, `lint`, `openapi2kong`, `merge`, `render`, `patch`, `add-plugins`, tags | ~80 min |
+| [03 - Putting it all together](/module-01-apiops/labs/03-deck-workflow) | Multi-team tagging, change workflow, OpenAPI-driven pipeline, backup/recovery | ~55 min |
+
+## Suggested reading
+
+- [decK overview](https://developer.konghq.com/deck/)
+- [deck gateway commands](https://developer.konghq.com/deck/gateway/)
+- [deck file commands](https://developer.konghq.com/deck/file/)
+- [Tags and select-tags](https://developer.konghq.com/deck/gateway/tags/)
+- [APIOps with decK](https://developer.konghq.com/deck/apiops/)
+- [Federated configuration](https://developer.konghq.com/deck/apiops/federated-configuration/)
 
 ## Exit ticket
 
-1. What is the difference between `deck gateway diff` and `deck gateway sync`? When do you use each?
-2. Your PR workflow runs `deck file validate` but the diff still fails. What could cause this?
-3. The production deploy job requires `environment: production` with a manual approval gate. Where in GitHub is this configured?
+1. What is the difference between `deck gateway sync` and `deck gateway apply`? When would you choose each?
+2. How do tags and `--select-tag` prevent teams from deleting each other's configuration?
+3. What does `deck file validate` catch that `deck gateway validate` doesn't, and vice versa?
+4. Describe the standard change workflow: what commands do you run, in what order, before deploying a config change?
 
 ## Common pitfalls
 
-| Symptom | Likely cause |
-|---|---|
-| `deck gateway diff` shows unexpected deletions | YAML files don't cover all Services - decK thinks missing ones should be deleted. Use `--select-tag` to scope |
-| Secrets appear in PR diff comments | Konnect token or API keys in YAML - use `deck file add-plugins` with `--select-tag` or environment variables |
-| Sync fails with "duplicate" error | Two YAML files define the same Service name - consolidate or use `--select-tag` |
-| CI passes but deploy fails | PR validated against dev but deploying to staging - schema differences between environments |
-| `_format_version` mismatch | YAML uses `'1.1'` but Kong 3.14 expects `'3.0'` |
+| Symptom | Likely cause | Mitigation |
+|---|---|---|
+| `sync` deletes services you didn't expect | YAML file doesn't describe all entities | Use `--select-tag` to scope, or use `apply` instead |
+| `file validate` passes but `gateway validate` fails | Plugin config invalid for your Kong version | Always run `gateway validate` before first deploy |
+| Two teams overwrite each other | No tags, both syncing full state | Tag all entities, use `--select-tag` per team |
+| Diff shows changes you didn't make | Kong added default values not in your YAML | Dump, compare, and add missing defaults to your file |
+| `openapi2kong` creates duplicate entities | Same spec converted twice with different settings | Use `--uuid-base` for stable IDs |
 
 ---
 

@@ -6,35 +6,36 @@
 
 > ⚙️ **Requires Kong Gateway 3.14 or newer** and decK 1.43+.
 
-A hands-on bootcamp for implementing APIOps with Kong Gateway using declarative configuration, GitOps pipelines, and CI/CD automation.
+A hands-on bootcamp for learning decK - the CLI for declarative Kong configuration management. Continues from the API Gateway, AI Gateway, and Agentic bootcamps.
 
 ## Overview
 
 | | |
 |---|---|
 | **Kong version** | **Kong Gateway 3.14+** |
-| **Format** | 1 module, 1 lab (~90 min) |
-| **Flow** | Repository structure → sync script → CI validation → CD deployment |
+| **Format** | 1 module, 3 labs (~3.5 hours) |
+| **Flow** | gateway commands → file commands → multi-team workflows |
 | **Platform** | decK CLI + GitHub Actions → Kong Konnect |
 
 ## Bootcamp Modules
 
 | # | Module | Key Topics |
 |---|---|---|
-| 01 | **APIOps with decK** | Declarative config, `deck diff`, `deck sync`, GitHub Actions CI/CD, multi-environment promotion |
+| 01 | **APIOps with decK** | `deck gateway` commands, `deck file` commands, tags, multi-team workflows |
 
 ## Modules
 
 | Module | Topic |
 |---|---|
-| [Module 01 - APIOps](./module-01-apiops/) | decK GitOps & CI/CD with GitHub Actions |
+| [Module 01 - APIOps](./module-01-apiops/) | Learning decK: gateway commands, file commands, workflows |
 
 ## Prerequisites
 
-- [Kong Gateway](https://docs.konghq.com/gateway/latest/) or [Kong Konnect](https://cloud.konghq.com) account
-- [decK CLI](https://docs.konghq.com/deck/latest/installation/) installed
+- Completed [API Gateway Bootcamp](../api-gateway-bootcamp/) (or equivalent Kong experience)
+- [Kong Gateway](https://developer.konghq.com/gateway/) or [Kong Konnect](https://cloud.konghq.com) with existing config
+- [decK CLI](https://developer.konghq.com/deck/) installed (1.43+)
 - [Node.js](https://nodejs.org/) 18+ (for docs site)
-- Git & GitHub account (for CI/CD labs)
+- jq 1.6+
 
 ## Getting Started
 
@@ -63,7 +64,9 @@ apiops-bootcamp/
 ├── module-01-apiops/
 │   ├── README.md                # Module overview
 │   └── labs/
-│       └── 09-deck-cicd.md      # decK GitOps & CI/CD lab
+│       ├── 01-deck-gateway.md   # deck gateway commands
+│       ├── 02-deck-file.md      # deck file commands
+│       └── 03-deck-workflow.md  # Multi-team workflows
 ├── index.md                     # Home page
 └── package.json
 ```
@@ -72,8 +75,8 @@ apiops-bootcamp/
 
 | Tool | Purpose |
 |---|---|
-| [Kong Gateway](https://docs.konghq.com/gateway/latest/) | API gateway |
-| [decK](https://docs.konghq.com/deck/latest/) | Declarative Kong config management |
+| [Kong Gateway](https://developer.konghq.com/gateway/) | API gateway |
+| [decK](https://developer.konghq.com/deck/) | Declarative Kong config management |
 | [GitHub Actions](https://docs.github.com/en/actions) | CI/CD automation |
 | [Kong Konnect](https://cloud.konghq.com) | Managed control plane |
 | [VitePress](https://vitepress.dev/) | Documentation site |

@@ -5,8 +5,8 @@ description: Everything you need installed before starting the Kong APIOps Bootc
 
 # Prerequisites
 
-::: warning Kong Gateway 3.14+ required
-All labs in this bootcamp target Kong Gateway 3.14 on Konnect. decK syntax and plugin schemas assume 3.14 or newer.
+::: warning Continues from earlier bootcamps
+This bootcamp assumes you have a running Kong Gateway with services, routes, and plugins configured from the API Gateway, AI Gateway, or Agentic bootcamps. You need an existing Kong state for decK to work with.
 :::
 
 ## Required tools
@@ -14,11 +14,17 @@ All labs in this bootcamp target Kong Gateway 3.14 on Konnect. decK syntax and p
 | Tool | Purpose | Min Version | Install |
 |---|---|---|---|
 | **decK** | Declarative Kong configuration (validate, diff, sync) | **1.43+** | `brew install kong/deck/deck` |
-| **Git** | Version control | Latest | `brew install git` |
-| **GitHub account** | CI/CD hosting for Actions workflows | - | [github.com](https://github.com) |
-| **Kong Konnect** | Cloud control plane (free tier works) | - | [cloud.konghq.com](https://cloud.konghq.com) |
+| **Kong Gateway** | Running instance with existing configuration | **3.14+** | From earlier bootcamp |
 | **jq** | Parse JSON responses | 1.6+ | `brew install jq` |
 | **Node.js** | Run the docs site locally | 20 LTS | `brew install node@20` |
+
+## Prior bootcamp experience
+
+You should have completed at least one of:
+
+- [API Gateway Bootcamp](../api-gateway-bootcamp/) - Services, Routes, Plugins, Consumers, Upstreams
+- [AI Gateway Bootcamp](../ai-gateway-bootcamp/) - AI proxy configuration
+- [Agentic Bootcamp](../agentic-bootcamp/) - MCP services and guardrails
 
 ## Verify your setup
 
@@ -27,25 +33,24 @@ All labs in this bootcamp target Kong Gateway 3.14 on Konnect. decK syntax and p
 deck version
 # Should show v1.43 or higher
 
-# Konnect connectivity
+# Kong connectivity (on-prem)
+deck gateway ping --kong-addr http://localhost:8001
+
+# Or Konnect connectivity
 export KONNECT_TOKEN="kpat_..."
 deck gateway ping --konnect-token "$KONNECT_TOKEN" \
-  --konnect-control-plane-name dev-control-plane
-# Connected to Kong
+  --konnect-control-plane-name default
 
 # jq
 jq --version
 # jq-1.6+
-
-# Git
-git --version
 ```
 
-## Konnect setup
+## Konnect setup (if using Konnect)
 
 1. Sign up at [cloud.konghq.com](https://cloud.konghq.com) (free tier works)
 2. Create a Personal Access Token (PAT): **Account** → **Tokens** → **Generate Token**
-3. Create at least one Control Plane named `dev-control-plane`
+3. Have at least one Control Plane with existing config
 
 ```bash
 export KONNECT_TOKEN="kpat_your_token_here"
@@ -53,4 +58,4 @@ export KONNECT_TOKEN="kpat_your_token_here"
 
 ---
 
-*Ready? Start with [Module 01 - APIOps with decK →](/module-01-apiops/)*
+*Ready? Start with [Lab 01 - deck gateway commands →](/module-01-apiops/labs/01-deck-gateway)*

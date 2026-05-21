@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Kong APIOps Bootcamp',
-  description: 'Kong Partner Enablement - APIOps with decK: GitOps, CI/CD pipelines, declarative config, and GitHub Actions for Kong Gateway.',
+  description: 'Kong Partner Enablement - APIOps with decK: gateway commands, file manipulation, multi-team workflows, and declarative Kong configuration.',
 
   srcDir: '..',
   outDir: '../dist',
@@ -34,7 +34,7 @@ export default defineConfig({
     ['link', { rel: 'apple-touch-icon', href: '/learn-kong-apiops-bootcamp/favicon.png' }],
     ['meta', { name: 'theme-color', content: '#000F06' }],
     ['meta', { property: 'og:title', content: 'Kong APIOps Bootcamp' }],
-    ['meta', { property: 'og:description', content: 'Hands-on APIOps: decK GitOps, GitHub Actions CI/CD, declarative config' }],
+    ['meta', { property: 'og:description', content: 'Hands-on APIOps: deck gateway commands, deck file operations, multi-team workflows' }],
     ['meta', { property: 'og:image', content: '/learn-kong-apiops-bootcamp/kong-gateway-logo.svg' }],
   ],
 
@@ -58,20 +58,10 @@ export default defineConfig({
       {
         text: '📚 Modules',
         items: [
-          { text: '📋 Overview',          link: '/module-01-apiops/' },
-          { text: '🔄 decK & CI/CD',      link: '/module-01-apiops/labs/01-deck-cicd' },
-        ],
-      },
-      {
-        text: '🚀 Specialist Bootcamps',
-        items: [
-          { text: '🏗️ API Gateway Bootcamp',  link: 'https://kong-grajesh-se.github.io/learn-kong-gateway/', target: '_blank' },
-          { text: '🤖 AI Gateway Bootcamp',    link: 'https://kong-grajesh-se.github.io/learn-kong-ai-gateway/', target: '_blank' },
-          { text: '🛠️ Agentic AI & MCP',       link: 'https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/', target: '_blank' },
-          { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-kong-dev-portal/', target: '_blank' },
-          { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
-          { text: '🤝 Bring Your Own Agent',   link: 'https://kong-grajesh-se.github.io/bring-your-own-agent/', target: '_blank' },
-          { text: '🌋 Volcano SDK Bootcamp',  link: 'https://kong-grajesh-se.github.io/learn-volcano-sdk/', target: '_blank' },
+          { text: '📋 Overview',                        link: '/module-01-apiops/' },
+          { text: '🔌 Lab 01: deck gateway commands',   link: '/module-01-apiops/labs/01-deck-gateway' },
+          { text: '📄 Lab 02: deck file commands',      link: '/module-01-apiops/labs/02-deck-file' },
+          { text: '🏗️ Lab 03: Putting it all together', link: '/module-01-apiops/labs/03-deck-workflow' },
         ],
       },
       {
@@ -82,6 +72,7 @@ export default defineConfig({
           { text: '☁️ Konnect',      link: 'https://cloud.konghq.com', target: '_blank' },
         ],
       },
+      { text: '🏠 All Bootcamps', link: 'https://kong-grajesh-se.github.io/learn-kong-bootcamps/', target: '_blank' },
     ],
 
     sidebar: [
@@ -96,20 +87,10 @@ export default defineConfig({
         text: '🔄 Module 01 - APIOps with decK',
         collapsed: false,
         items: [
-          { text: '📋 Overview',        link: '/module-01-apiops/' },
-          { text: '🔄 Lab 01-A: decK & CI/CD', link: '/module-01-apiops/labs/01-deck-cicd' },
-        ],
-      },
-      {
-        text: '🚀 Specialist Bootcamps',
-        collapsed: false,
-        items: [
-          { text: '🏗️ API Gateway Bootcamp',  link: 'https://kong-grajesh-se.github.io/learn-kong-gateway/', target: '_blank' },
-          { text: '🤖 AI Gateway Bootcamp',    link: 'https://kong-grajesh-se.github.io/learn-kong-ai-gateway/', target: '_blank' },
-          { text: '🛠️ Agentic AI & MCP',       link: 'https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/', target: '_blank' },
-          { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-kong-dev-portal/', target: '_blank' },
-          { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
-          { text: '🤝 Bring Your Own Agent',   link: 'https://kong-grajesh-se.github.io/bring-your-own-agent/', target: '_blank' },
+          { text: '📋 Overview',                        link: '/module-01-apiops/' },
+          { text: '🔌 Lab 01: deck gateway commands',   link: '/module-01-apiops/labs/01-deck-gateway' },
+          { text: '📄 Lab 02: deck file commands',      link: '/module-01-apiops/labs/02-deck-file' },
+          { text: '🏗️ Lab 03: Putting it all together', link: '/module-01-apiops/labs/03-deck-workflow' },
         ],
       },
     ],
