@@ -4,6 +4,8 @@
 >
 > **This lab.** You'll learn the `deck file` command family - tools that manipulate Kong configuration files **without talking to Kong**. These run entirely offline: validate syntax, enforce rules, convert OpenAPI specs to Kong config, merge files, patch values, and manage plugins and tags.
 
+![decK File Architecture](../../public/deck_file_architecture.png)
+
 ---
 
 ## Before you start

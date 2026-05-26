@@ -8,6 +8,8 @@
 >
 > Both teams need to work independently without breaking each other's config. You'll set this up using decK tags and the commands you've learned.
 
+![decK Workflow Architecture](../../public/deck_workflow_architecture.png)
+
 ---
 
 ## Step 1 - Snapshot and split (15 min)

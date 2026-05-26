@@ -6,6 +6,8 @@
 >
 > **This lab.** You'll learn the `deck gateway` command family - the tools that let you capture, inspect, compare, and control Kong state from the command line.
 
+![decK Gateway Architecture](../../public/deck_gateway_architecture.png)
+
 ---
 
 ## Before you start
