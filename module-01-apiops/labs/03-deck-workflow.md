@@ -22,6 +22,15 @@ Start by capturing the current state and splitting it into team-owned files.
 deck gateway dump --kong-addr http://localhost:8001 -o full-state.yaml
 ```
 
+Or with Konnect:
+
+```bash
+deck gateway dump \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  -o full-state.yaml
+```
+
 ### Split into team files
 
 Create `platform/global.yaml` with just the global plugins and consumers:
@@ -122,6 +131,24 @@ deck gateway sync --kong-addr http://localhost:8001 \
   platform/global.yaml
 ```
 
+Or with Konnect:
+
+```bash
+# Check what would change (scoped to team-platform tags)
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --select-tag team-platform \
+  platform/global.yaml
+
+# Apply only platform-owned entities
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --select-tag team-platform \
+  platform/global.yaml
+```
+
 ### Travel team validates and syncs
 
 ```bash
@@ -135,6 +162,24 @@ deck gateway diff --kong-addr http://localhost:8001 \
 
 # Apply only travel-owned entities
 deck gateway sync --kong-addr http://localhost:8001 \
+  --select-tag team-travel \
+  travel/services.yaml
+```
+
+Or with Konnect:
+
+```bash
+# Preview
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --select-tag team-travel \
+  travel/services.yaml
+
+# Apply only travel-owned entities
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
   --select-tag team-travel \
   travel/services.yaml
 ```
@@ -235,6 +280,16 @@ deck gateway diff --kong-addr http://localhost:8001 \
   travel/services.yaml
 ```
 
+Or with Konnect:
+
+```bash
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --select-tag team-travel \
+  travel/services.yaml
+```
+
 Expected output:
 
 ```
@@ -252,6 +307,16 @@ Summary:
 
 ```bash
 deck gateway sync --kong-addr http://localhost:8001 \
+  --select-tag team-travel \
+  travel/services.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
   --select-tag team-travel \
   travel/services.yaml
 ```
@@ -302,6 +367,16 @@ deck gateway diff --kong-addr http://localhost:8001 \
   travel-with-plugins.yaml
 ```
 
+Or with Konnect:
+
+```bash
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --select-tag team-travel \
+  travel-with-plugins.yaml
+```
+
 ### 5. Render the final state
 
 ```bash
@@ -325,11 +400,30 @@ deck gateway dump --kong-addr http://localhost:8001 \
   -o travel-backup-$(date +%Y%m%d).yaml
 ```
 
+Or with Konnect:
+
+```bash
+deck gateway dump \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --select-tag team-travel \
+  -o travel-backup-$(date +%Y%m%d).yaml
+```
+
 ### Simulate a disaster
 
 ```bash
 # Delete only travel team entities
 deck gateway reset --kong-addr http://localhost:8001 \
+  --select-tag team-travel
+```
+
+Or with Konnect:
+
+```bash
+deck gateway reset \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
   --select-tag team-travel
 ```
 
@@ -351,6 +445,16 @@ curl -s http://localhost:8001/consumers | jq '.data[].username'
 
 ```bash
 deck gateway sync --kong-addr http://localhost:8001 \
+  --select-tag team-travel \
+  travel-backup-*.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
   --select-tag team-travel \
   travel-backup-*.yaml
 ```

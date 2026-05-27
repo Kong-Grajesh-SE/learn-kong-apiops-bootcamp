@@ -154,6 +154,31 @@ deck gateway dump --kong-addr http://localhost:8001 \
   -o kong-sanitized.yaml
 ```
 
+Or with Konnect (apply the same flags, replacing `--kong-addr`):
+
+```bash
+# Skip consumers
+deck gateway dump \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --skip-consumers \
+  -o kong-no-consumers.yaml
+
+# Include entity IDs
+deck gateway dump \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --with-id \
+  -o kong-with-ids.yaml
+
+# Sanitized dump
+deck gateway dump \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --sanitize \
+  -o kong-sanitized.yaml
+```
+
 Compare the files:
 
 ```bash
@@ -173,6 +198,15 @@ diff <(grep "key:" kong-snapshot.yaml) <(grep "key:" kong-sanitized.yaml)
 
 ```bash
 deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
 ```
 
 Since you just dumped this file, the diff should be clean:
@@ -198,6 +232,15 @@ Now diff:
 
 ```bash
 deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
 ```
 
 You'll see output like:
@@ -230,6 +273,16 @@ deck gateway diff --kong-addr http://localhost:8001 \
   kong-snapshot.yaml
 ```
 
+Or with Konnect:
+
+```bash
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --json-output \
+  kong-snapshot.yaml
+```
+
 This produces structured JSON with `old` and `new` values for each change - useful when you need to parse diffs programmatically.
 
 ### Diff as drift detection
@@ -246,6 +299,15 @@ Now diff:
 
 ```bash
 deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
 ```
 
 decK will show the drift - Kong's live state no longer matches your file. This is how teams detect unauthorized manual changes.
@@ -283,6 +345,22 @@ deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
 deck gateway sync --kong-addr http://localhost:8001 kong-snapshot.yaml
 ```
 
+Or with Konnect:
+
+```bash
+# Step A: Always preview first
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
+
+# Step B: Only sync when the diff looks right
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
+```
+
 ### Try it: add a new plugin
 
 Edit `kong-snapshot.yaml` and add a `correlation-id` plugin to `flights-svc`:
@@ -315,6 +393,22 @@ deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
 deck gateway sync --kong-addr http://localhost:8001 kong-snapshot.yaml
 ```
 
+Or with Konnect:
+
+```bash
+# Preview
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
+
+# Apply
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
+```
+
 Verify it's live:
 
 ```bash
@@ -332,6 +426,21 @@ deck gateway sync --kong-addr http://localhost:8001 \
 
 # Or sync an entire directory
 deck gateway sync --kong-addr http://localhost:8001 \
+  config-dir/*.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  services.yaml consumers.yaml plugins.yaml
+
+# Or sync an entire directory
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
   config-dir/*.yaml
 ```
 
@@ -385,6 +494,15 @@ Apply it:
 deck gateway apply --kong-addr http://localhost:8001 new-service.yaml
 ```
 
+Or with Konnect:
+
+```bash
+deck gateway apply \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  new-service.yaml
+```
+
 Verify:
 
 ```bash
@@ -412,6 +530,21 @@ services:
     - /test' | deck gateway apply --kong-addr http://localhost:8001
 ```
 
+Or with Konnect:
+
+```bash
+echo '_format_version: "3.0"
+services:
+- name: test-svc
+  url: http://httpbin.konghq.com
+  routes:
+  - name: test-route
+    paths:
+    - /test' | deck gateway apply \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default
+```
+
 **✅ Checkpoint.** You've used `apply` to add config without deleting existing entities, and understand when to choose `apply` over `sync`.
 
 ---
@@ -422,6 +555,15 @@ services:
 
 ```bash
 deck gateway validate --kong-addr http://localhost:8001 kong-snapshot.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway validate \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
 ```
 
 ### Force a validation error
@@ -442,6 +584,15 @@ services:
 
 ```bash
 deck gateway validate --kong-addr http://localhost:8001 bad-config.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway validate \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  bad-config.yaml
 ```
 
 You'll see an error from the Admin API explaining the invalid value.
@@ -470,11 +621,28 @@ You'll see an error from the Admin API explaining the invalid value.
 deck gateway reset --kong-addr http://localhost:8001
 ```
 
+Or with Konnect:
+
+```bash
+deck gateway reset \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default
+```
+
 You can scope the reset to only tagged entities:
 
 ```bash
 # Only delete entities tagged "lab-temp"
 deck gateway reset --kong-addr http://localhost:8001 \
+  --select-tag lab-temp
+```
+
+Or with Konnect:
+
+```bash
+deck gateway reset \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
   --select-tag lab-temp
 ```
 
@@ -491,6 +659,15 @@ This is why you took a dump in Step 2:
 
 ```bash
 deck gateway sync --kong-addr http://localhost:8001 kong-snapshot.yaml
+```
+
+Or with Konnect:
+
+```bash
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  kong-snapshot.yaml
 ```
 
 Verify everything is back:

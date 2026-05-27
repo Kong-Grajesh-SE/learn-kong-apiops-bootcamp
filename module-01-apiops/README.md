@@ -23,8 +23,13 @@ You have completed (or are familiar with) the earlier bootcamps and have a runni
 deck version
 # decK v1.43+
 
-# Verify connectivity
+# Verify connectivity (on-prem)
 deck gateway ping --kong-addr http://localhost:8001
+
+# Verify connectivity (Konnect)
+deck gateway ping \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default
 ```
 
 ## What you need

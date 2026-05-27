@@ -16,6 +16,15 @@ Make sure you have `kong-snapshot.yaml` from Lab 01. If not, dump it now:
 deck gateway dump --kong-addr http://localhost:8001 -o kong-snapshot.yaml
 ```
 
+Or with Konnect:
+
+```bash
+deck gateway dump \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  -o kong-snapshot.yaml
+```
+
 ---
 
 ## Step 1 - deck file validate (10 min)
@@ -496,6 +505,24 @@ deck gateway sync --kong-addr http://localhost:8001 \
 
 # Only diff entities tagged "team-platform"
 deck gateway diff --kong-addr http://localhost:8001 \
+  --select-tag team-platform \
+  platform-config.yaml
+```
+
+Or with Konnect:
+
+```bash
+# Only sync entities tagged "team-travel"
+deck gateway sync \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
+  --select-tag team-travel \
+  travel-config.yaml
+
+# Only diff entities tagged "team-platform"
+deck gateway diff \
+  --konnect-token "$KONNECT_TOKEN" \
+  --konnect-control-plane-name default \
   --select-tag team-platform \
   platform-config.yaml
 ```
