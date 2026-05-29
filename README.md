@@ -8,6 +8,8 @@
 
 A hands-on bootcamp for learning decK - the CLI for declarative Kong configuration management. Continues from the API Gateway, AI Gateway, and Agentic bootcamps.
 
+![Bootcamp Recap](./public/bootcamp_recap.png)
+
 ## Overview
 
 | | |
