@@ -16,7 +16,9 @@ export default defineConfig({
   ignoreDeadLinks: true,
 
   rewrites: {
-    'module-01-apiops/README.md': 'module-01-apiops/index.md',
+    'module-01-deck-gateway/README.md': 'module-01-deck-gateway/index.md',
+    'module-02-deck-file/README.md': 'module-02-deck-file/index.md',
+    'module-03-deck-workflow/README.md': 'module-03-deck-workflow/index.md',
   },
 
   srcExclude: [
@@ -58,10 +60,9 @@ export default defineConfig({
       {
         text: '📚 Modules',
         items: [
-          { text: '📋 Overview',                        link: '/module-01-apiops/' },
-          { text: '🔌 Lab 01: deck gateway commands',   link: '/module-01-apiops/labs/01-deck-gateway' },
-          { text: '📄 Lab 02: deck file commands',      link: '/module-01-apiops/labs/02-deck-file' },
-          { text: '🏗️ Lab 03: Putting it all together', link: '/module-01-apiops/labs/03-deck-workflow' },
+          { text: '|> Module 01: deck gateway Commands',  link: '/module-01-deck-gateway/' },
+          { text: '{} Module 02: deck file Commands',      link: '/module-02-deck-file/' },
+          { text: '<< Module 03: Multi-Team Workflows',    link: '/module-03-deck-workflow/' },
         ],
       },
       {
@@ -84,13 +85,27 @@ export default defineConfig({
         ],
       },
       {
-        text: '🔄 Module 01 - APIOps with decK',
+        text: 'Module 01 - deck gateway Commands',
         collapsed: false,
         items: [
-          { text: '📋 Overview',                        link: '/module-01-apiops/' },
-          { text: '🔌 Lab 01: deck gateway commands',   link: '/module-01-apiops/labs/01-deck-gateway' },
-          { text: '📄 Lab 02: deck file commands',      link: '/module-01-apiops/labs/02-deck-file' },
-          { text: '🏗️ Lab 03: Putting it all together', link: '/module-01-apiops/labs/03-deck-workflow' },
+          { text: 'Overview',                        link: '/module-01-deck-gateway/' },
+          { text: 'Lab 01: deck gateway commands',   link: '/module-01-deck-gateway/labs/01-deck-gateway' },
+        ],
+      },
+      {
+        text: 'Module 02 - deck file Commands',
+        collapsed: false,
+        items: [
+          { text: 'Overview',                        link: '/module-02-deck-file/' },
+          { text: 'Lab 01: deck file commands',      link: '/module-02-deck-file/labs/01-deck-file' },
+        ],
+      },
+      {
+        text: 'Module 03 - Multi-Team Workflows',
+        collapsed: false,
+        items: [
+          { text: 'Overview',                        link: '/module-03-deck-workflow/' },
+          { text: 'Lab 01: Multi-Team Workflows',   link: '/module-03-deck-workflow/labs/01-deck-workflow' },
         ],
       },
     ],

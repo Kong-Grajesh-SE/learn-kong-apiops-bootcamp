@@ -2,7 +2,7 @@
 
 ![Kong Gateway 3.14+](https://img.shields.io/badge/Kong%20Gateway-3.14%2B-CCFF00?style=for-the-badge&labelColor=001408)
 ![Platform: Konnect](https://img.shields.io/badge/Platform-Konnect-CCFF00?style=for-the-badge&labelColor=001408)
-![Modules: 1](https://img.shields.io/badge/Modules-1-CCFF00?style=for-the-badge&labelColor=001408)
+![Modules: 3](https://img.shields.io/badge/Modules-3-CCFF00?style=for-the-badge&labelColor=001408)
 
 > ⚙️ **Requires Kong Gateway 3.14 or newer** and decK 1.43+.
 
@@ -15,21 +15,17 @@ A hands-on bootcamp for learning decK - the CLI for declarative Kong configurati
 | | |
 |---|---|
 | **Kong version** | **Kong Gateway 3.14+** |
-| **Format** | 1 module, 3 labs (~3.5 hours) |
+| **Format** | 3 modules, 3 labs (~3.5 hours) |
 | **Flow** | gateway commands → file commands → multi-team workflows |
 | **Platform** | decK CLI + GitHub Actions → Kong Konnect |
 
-## Bootcamp Modules
+## Modules
 
 | # | Module | Key Topics |
 |---|---|---|
-| 01 | **APIOps with decK** | `deck gateway` commands, `deck file` commands, tags, multi-team workflows |
-
-## Modules
-
-| Module | Topic |
-|---|---|
-| [Module 01 - APIOps](./module-01-apiops/) | Learning decK: gateway commands, file commands, workflows |
+| 01 | [deck gateway Commands](./module-01-deck-gateway/) | `ping`, `dump`, `diff`, `sync`, `apply`, `validate`, `reset` |
+| 02 | [deck file Commands](./module-02-deck-file/) | `validate`, `lint`, `openapi2kong`, `merge`, `render`, `patch`, `add-plugins` |
+| 03 | [Multi-Team Workflows](./module-03-deck-workflow/) | Tags, change workflows, OpenAPI-driven pipelines, backup/recovery |
 
 ## Prerequisites
 
@@ -63,12 +59,18 @@ npm run docs:preview
 apiops-bootcamp/
 ├── docs/                        # VitePress documentation source
 │   └── .vitepress/              # VitePress config & theme
-├── module-01-apiops/
+├── module-01-deck-gateway/
 │   ├── README.md                # Module overview
 │   └── labs/
-│       ├── 01-deck-gateway.md   # deck gateway commands
-│       ├── 02-deck-file.md      # deck file commands
-│       └── 03-deck-workflow.md  # Multi-team workflows
+│       └── 01-deck-gateway.md   # deck gateway commands
+├── module-02-deck-file/
+│   ├── README.md                # Module overview
+│   └── labs/
+│       └── 01-deck-file.md      # deck file commands
+├── module-03-deck-workflow/
+│   ├── README.md                # Module overview
+│   └── labs/
+│       └── 01-deck-workflow.md  # Multi-team workflows
 ├── index.md                     # Home page
 └── package.json
 ```
