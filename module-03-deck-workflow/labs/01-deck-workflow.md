@@ -4,7 +4,7 @@
 >
 > **Scenario.** Your organization has two teams:
 > - **Platform team** owns global plugins (CORS, correlation-id, rate limiting defaults) and consumers
-> - **Travel API team** owns the `flights-svc`, `hotels-svc`, and `cars-svc` services and routes from the API Gateway bootcamp
+> - **Bookstore API team** owns the `bookstore-service`, `inventory-service`, and `payments-service` services and routes from the API Gateway bootcamp
 >
 > Both teams need to work independently without breaking each other's config. You'll set this up using decK tags and the commands you've learned.
 
@@ -69,41 +69,41 @@ Create `travel/services.yaml` with the travel team's services:
 _format_version: "3.0"
 _info:
   select_tags:
-    - team-travel
+    - team-bookstore
 services:
-  - name: flights-svc
-    host: httpbin.konghq.com
+  - name: bookstore-service
+    host: httpbun.com
     port: 443
     protocol: https
     tags:
-      - team-travel
+      - team-bookstore
     routes:
-      - name: flights-route
+      - name: bookstore-route
         paths:
-          - /flights
+          - /bookstore
         strip_path: true
         tags:
-          - team-travel
+          - team-bookstore
     plugins:
       - name: key-auth
         config:
           key_names:
             - X-API-Key
         tags:
-          - team-travel
-  - name: hotels-svc
-    host: httpbin.konghq.com
+          - team-bookstore
+  - name: inventory-service
+    host: httpbun.com
     port: 443
     protocol: https
     tags:
-      - team-travel
+      - team-bookstore
     routes:
       - name: hotels-route
         paths:
           - /hotels
         strip_path: true
         tags:
-          - team-travel
+          - team-bookstore
 ```
 
 **✅ Checkpoint.** You have two separate config files, each tagged with its team name.
@@ -157,12 +157,12 @@ deck file validate travel/services.yaml
 
 # Preview
 deck gateway diff --kong-addr http://localhost:8001 \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel/services.yaml
 
 # Apply only travel-owned entities
 deck gateway sync --kong-addr http://localhost:8001 \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel/services.yaml
 ```
 
@@ -173,14 +173,14 @@ Or with Konnect:
 deck gateway diff \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel/services.yaml
 
 # Apply only travel-owned entities
 deck gateway sync \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel/services.yaml
 ```
 
@@ -189,16 +189,16 @@ deck gateway sync \
 ```bash
 # Both teams' entities coexist
 curl -s http://localhost:8001/services | jq '.data[].name'
-# flights-svc, hotels-svc (team-travel)
+# bookstore-service, inventory-service (team-bookstore)
 # ...plus any other services (untagged or other teams)
 
 # Platform global plugin is active
-curl -sI http://localhost:8000/flights \
+curl -sI http://localhost:8000/bookstore \
   -H "X-API-Key: web-app-secret-key-001" | grep X-Request-ID
 ```
 
 ::: tip select-tag safety
-When you use `--select-tag team-travel`, `deck gateway sync` only creates/updates/deletes entities with the `team-travel` tag. The platform team's entities are invisible and untouched.
+When you use `--select-tag team-bookstore`, `deck gateway sync` only creates/updates/deletes entities with the `team-bookstore` tag. The platform team's entities are invisible and untouched.
 :::
 
 **✅ Checkpoint.** Two teams can sync independently. Neither team can delete the other team's entities.
@@ -214,26 +214,26 @@ Walk through a realistic change: the travel team adds a new service for car rent
 Add to `travel/services.yaml`:
 
 ```yaml
-  - name: cars-svc
-    host: httpbin.konghq.com
+  - name: payments-service
+    host: httpbun.com
     port: 443
     protocol: https
     tags:
-      - team-travel
+      - team-bookstore
     routes:
       - name: cars-route
         paths:
           - /cars
         strip_path: true
         tags:
-          - team-travel
+          - team-bookstore
     plugins:
       - name: rate-limiting
         config:
           minute: 30
           policy: local
         tags:
-          - team-travel
+          - team-bookstore
 ```
 
 ### 2. Validate
@@ -276,7 +276,7 @@ deck file lint -s travel/services.yaml travel/ruleset.yaml
 
 ```bash
 deck gateway diff --kong-addr http://localhost:8001 \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel/services.yaml
 ```
 
@@ -286,16 +286,16 @@ Or with Konnect:
 deck gateway diff \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel/services.yaml
 ```
 
 Expected output:
 
 ```
-creating service cars-svc
+creating service payments-service
 creating route cars-route
-creating plugin rate-limiting (service: cars-svc)
+creating plugin rate-limiting (service: payments-service)
 
 Summary:
   Created: 3
@@ -307,7 +307,7 @@ Summary:
 
 ```bash
 deck gateway sync --kong-addr http://localhost:8001 \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel/services.yaml
 ```
 
@@ -317,7 +317,7 @@ Or with Konnect:
 deck gateway sync \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel/services.yaml
 ```
 
@@ -337,14 +337,14 @@ Now try a workflow where config starts from an OpenAPI spec instead of hand-writ
 
 ### 1. Start from a spec
 
-Use the `travel-api.yaml` OpenAPI spec from Lab 02 (or create a new one).
+Use the `bookstore-api.yaml` OpenAPI spec from Lab 02 (or create a new one).
 
 ### 2. Convert
 
 ```bash
 deck file openapi2kong \
-  --spec travel-api.yaml \
-  --select-tag team-travel \
+  --spec bookstore-api.yaml \
+  --select-tag team-bookstore \
   -o travel-from-oas.yaml
 ```
 
@@ -353,7 +353,7 @@ deck file openapi2kong \
 ```bash
 deck file add-plugins \
   -s travel-from-oas.yaml \
-  --config '{"name":"rate-limiting","config":{"minute":100,"policy":"local"},"tags":["team-travel"]}' \
+  --config '{"name":"rate-limiting","config":{"minute":100,"policy":"local"},"tags":["team-bookstore"]}' \
   -o travel-with-plugins.yaml
 ```
 
@@ -363,7 +363,7 @@ deck file add-plugins \
 deck file validate travel-with-plugins.yaml
 
 deck gateway diff --kong-addr http://localhost:8001 \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel-with-plugins.yaml
 ```
 
@@ -373,7 +373,7 @@ Or with Konnect:
 deck gateway diff \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel-with-plugins.yaml
 ```
 
@@ -396,7 +396,7 @@ Review the rendered output - this is exactly what will be sent to Kong.
 ```bash
 # Dump only your team's entities
 deck gateway dump --kong-addr http://localhost:8001 \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   -o travel-backup-$(date +%Y%m%d).yaml
 ```
 
@@ -406,7 +406,7 @@ Or with Konnect:
 deck gateway dump \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   -o travel-backup-$(date +%Y%m%d).yaml
 ```
 
@@ -415,7 +415,7 @@ deck gateway dump \
 ```bash
 # Delete only travel team entities
 deck gateway reset --kong-addr http://localhost:8001 \
-  --select-tag team-travel
+  --select-tag team-bookstore
 ```
 
 Or with Konnect:
@@ -424,13 +424,13 @@ Or with Konnect:
 deck gateway reset \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel
+  --select-tag team-bookstore
 ```
 
 Verify they're gone:
 
 ```bash
-curl -s http://localhost:8001/services/flights-svc
+curl -s http://localhost:8001/services/bookstore-service
 # 404
 ```
 
@@ -445,7 +445,7 @@ curl -s http://localhost:8001/consumers | jq '.data[].username'
 
 ```bash
 deck gateway sync --kong-addr http://localhost:8001 \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel-backup-*.yaml
 ```
 
@@ -455,13 +455,13 @@ Or with Konnect:
 deck gateway sync \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel-backup-*.yaml
 ```
 
 ```bash
 curl -s http://localhost:8001/services | jq '.data[].name'
-# flights-svc, hotels-svc, cars-svc - restored
+# bookstore-service, inventory-service, payments-service - restored
 ```
 
 **✅ Checkpoint.** You can take scoped backups and restore individual team configs without affecting others.

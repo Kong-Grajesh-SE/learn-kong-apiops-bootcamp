@@ -47,7 +47,7 @@ Create `broken.yaml`:
 _format_version: "3.0"
 services:
   - name: bad-svc
-    host: httpbin.konghq.com
+    host: httpbun.com
     routes:
       - paths:
           - /broken
@@ -196,17 +196,17 @@ Teams use lint rules to enforce organizational standards: "all services must use
 
 ### Create a sample OpenAPI spec
 
-Create `travel-api.yaml`:
+Create `bookstore-api.yaml`:
 
 ```yaml
 openapi: "3.0.3"
 info:
-  title: MyTravel API
+  title: MyBookstore API
   version: "1.0.0"
 servers:
   - url: https://travel-api.internal:8443
 paths:
-  /flights:
+  /bookstore:
     get:
       operationId: listFlights
       summary: List available flights
@@ -219,7 +219,7 @@ paths:
           in: query
           schema:
             type: string
-  /flights/{id}:
+  /bookstore/{id}:
     get:
       operationId: getFlight
       summary: Get flight details
@@ -243,7 +243,7 @@ paths:
 
 ```bash
 deck file openapi2kong \
-  --spec travel-api.yaml \
+  --spec bookstore-api.yaml \
   --output-file travel-kong.yaml
 ```
 
@@ -270,12 +270,12 @@ services:
         methods:
           - GET
         paths:
-          - ~/flights$
+          - ~/bookstore$
       - name: mytravel-api-getflight
         methods:
           - GET
         paths:
-          - ~/flights/(?<id>[^/]+)$
+          - ~/bookstore/(?<id>[^/]+)$
     # ...
 ```
 
@@ -283,12 +283,12 @@ services:
 
 ```bash
 # Add tags to all generated entities
-deck file openapi2kong --spec travel-api.yaml \
-  --select-tag team-travel,env-dev \
+deck file openapi2kong --spec bookstore-api.yaml \
+  --select-tag team-bookstore,env-dev \
   -o travel-kong.yaml
 
 # Skip ID generation (if you want name-based matching)
-deck file openapi2kong --spec travel-api.yaml \
+deck file openapi2kong --spec bookstore-api.yaml \
   --inso-compatible \
   -o travel-kong.yaml
 ```
@@ -315,8 +315,8 @@ Create two partial files:
 ```yaml
 _format_version: "3.0"
 services:
-  - name: flights-svc
-    host: httpbin.konghq.com
+  - name: bookstore-service
+    host: httpbun.com
     port: 443
     protocol: https
 ```
@@ -348,7 +348,7 @@ Create `env-config.yaml`:
 ```yaml
 _format_version: "3.0"
 services:
-  - name: flights-svc
+  - name: bookstore-service
     host: ${{ env "DECK_FLIGHTS_HOST" }}
     port: 443
     protocol: https
@@ -359,7 +359,7 @@ services:
 deck file render env-config.yaml
 
 # With actual env var values
-export DECK_FLIGHTS_HOST="httpbin.konghq.com"
+export DECK_FLIGHTS_HOST="httpbun.com"
 deck file render env-config.yaml --populate-env-vars
 ```
 
@@ -385,15 +385,15 @@ deck file render env-config.yaml --populate-env-vars
 ```bash
 deck file patch \
   -s kong-snapshot.yaml \
-  --selector '$.services[?(@.name=="flights-svc")]' \
-  --value 'host:httpbin.org' \
+  --selector '$.services[?(@.name=="bookstore-service")]' \
+  --value 'host:__KEEP_HTTPBUN_ORG__' \
   -o patched.yaml
 ```
 
 Check the result:
 
 ```bash
-grep -A3 "flights-svc" patched.yaml
+grep -A3 "bookstore-service" patched.yaml
 ```
 
 ### Patch multiple values
@@ -402,7 +402,7 @@ grep -A3 "flights-svc" patched.yaml
 # Change protocol and port together
 deck file patch \
   -s kong-snapshot.yaml \
-  --selector '$.services[?(@.name=="flights-svc")]' \
+  --selector '$.services[?(@.name=="bookstore-service")]' \
   --value 'protocol:http' \
   --value 'port:80' \
   -o patched.yaml
@@ -425,7 +425,7 @@ Use `deck file patch` in pipelines where you need to programmatically adjust con
 ```bash
 deck file add-plugins \
   -s kong-snapshot.yaml \
-  --selector '$.services[?(@.name=="flights-svc")]' \
+  --selector '$.services[?(@.name=="bookstore-service")]' \
   --config '{"name":"rate-limiting","config":{"minute":60,"policy":"local"}}' \
   -o with-rate-limit.yaml
 ```
@@ -445,7 +445,7 @@ This is a common pattern in federated teams:
 
 ```bash
 # 1. API team generates config from their spec
-deck file openapi2kong --spec travel-api.yaml -o travel-base.yaml
+deck file openapi2kong --spec bookstore-api.yaml -o travel-base.yaml
 
 # 2. Platform team adds standard plugins
 deck file add-plugins -s travel-base.yaml \
@@ -498,9 +498,9 @@ deck file remove-tags -s tagged.yaml \
 Tags unlock `--select-tag` on gateway commands:
 
 ```bash
-# Only sync entities tagged "team-travel"
+# Only sync entities tagged "team-bookstore"
 deck gateway sync --kong-addr http://localhost:8001 \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel-config.yaml
 
 # Only diff entities tagged "team-platform"
@@ -512,11 +512,11 @@ deck gateway diff --kong-addr http://localhost:8001 \
 Or with Konnect:
 
 ```bash
-# Only sync entities tagged "team-travel"
+# Only sync entities tagged "team-bookstore"
 deck gateway sync \
   --konnect-token "$KONNECT_TOKEN" \
   --konnect-control-plane-name default \
-  --select-tag team-travel \
+  --select-tag team-bookstore \
   travel-config.yaml
 
 # Only diff entities tagged "team-platform"

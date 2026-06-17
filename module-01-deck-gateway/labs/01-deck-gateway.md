@@ -1,6 +1,6 @@
 # Lab 01 - deck gateway commands
 
-> **Story so far.** You've built a working Kong deployment across the API Gateway, AI Gateway, and Agentic bootcamps. Services like `flights-svc`, `hotels-svc`, `AIManagerModelService`, and `mcp-backend` are running. Consumers (`web-app`, `mobile-app`, `travel-agent`) are authenticated. Plugins are doing rate limiting, key auth, AI proxying, and MCP conversion. Everything was configured via the Admin API or Kong Manager.
+> **Story so far.** You've built a working Kong deployment across the API Gateway, AI Gateway, and Agentic bootcamps. Services like `bookstore-service`, `inventory-service`, `ai-gateway-service`, and `mcp-backend` are running. Consumers (`web-app`, `mobile-app`, `travel-agent`) are authenticated. Plugins are doing rate limiting, key auth, AI proxying, and MCP conversion. Everything was configured via the Admin API or Kong Manager.
 >
 > **Problem.** Nobody can answer "what exactly is running in Kong right now?" without clicking through Kong Manager. There's no audit trail, no way to reproduce the setup, and no safety net if someone deletes the wrong plugin.
 >
@@ -92,7 +92,7 @@ grep "^- name:" kong-snapshot.yaml | head -20
 head -3 kong-snapshot.yaml
 ```
 
-You should see services from your earlier bootcamps: `flights-svc`, `hotels-svc`, `cars-svc`, `AIManagerModelService`, `mcp-backend`, and their associated routes, plugins, and consumers.
+You should see services from your earlier bootcamps: `bookstore-service`, `inventory-service`, `payments-service`, `ai-gateway-service`, `mcp-backend`, and their associated routes, plugins, and consumers.
 
 ### Understand the structure
 
@@ -101,14 +101,14 @@ Open `kong-snapshot.yaml` in your editor. Notice the top-level keys:
 ```yaml
 _format_version: "3.0"
 services:
-  - name: flights-svc
-    host: httpbin.konghq.com
+  - name: bookstore-service
+    host: httpbun.com
     port: 443
     protocol: https
     routes:
-      - name: flights-route
+      - name: bookstore-route
         paths:
-          - /flights
+          - /bookstore
         strip_path: true
     plugins:
       - name: key-auth
@@ -122,12 +122,12 @@ consumers:
     keyauth_credentials:
       - key: web-app-secret-key-001
 upstreams:
-  - name: flights-pool
+  - name: bookstore-pool
     algorithm: round-robin
     targets:
-      - target: httpbin.konghq.com:443
+      - target: httpbun.com:443
         weight: 100
-      - target: httpbin.org:443
+      - target: __KEEP_HTTPBUN_ORG__:443
         weight: 50
 ```
 
@@ -220,12 +220,12 @@ Summary:
 
 ### Make a change and diff again
 
-Edit `kong-snapshot.yaml` and modify the `flights-svc` host:
+Edit `kong-snapshot.yaml` and modify the `bookstore-service` host:
 
 ```yaml
 services:
-  - name: flights-svc
-    host: httpbin.org          # was: httpbin.konghq.com
+  - name: bookstore-service
+    host: __KEEP_HTTPBUN_ORG__          # was: httpbun.com
 ```
 
 Now diff:
@@ -246,12 +246,12 @@ deck gateway diff \
 You'll see output like:
 
 ```
-updating service flights-svc  {
+updating service bookstore-service  {
    "connect_timeout": 60000,
    "enabled": true,
--  "host": "httpbin.konghq.com",
-+  "host": "httpbin.org",
-   "name": "flights-svc",
+-  "host": "httpbun.com",
++  "host": "__KEEP_HTTPBUN_ORG__",
+   "name": "bookstore-service",
    ...
  }
 
@@ -287,11 +287,11 @@ This produces structured JSON with `old` and `new` values for each change - usef
 
 ### Diff as drift detection
 
-Revert your edit (change `httpbin.org` back to `httpbin.konghq.com`), then make a change directly in Kong:
+Revert your edit (change `__KEEP_HTTPBUN_ORG__` back to `httpbun.com`), then make a change directly in Kong:
 
 ```bash
 # Change something via Admin API
-curl -s -X PATCH http://localhost:8001/services/flights-svc \
+curl -s -X PATCH http://localhost:8001/services/bookstore-service \
   -d "retries=3"
 ```
 
@@ -363,12 +363,12 @@ deck gateway sync \
 
 ### Try it: add a new plugin
 
-Edit `kong-snapshot.yaml` and add a `correlation-id` plugin to `flights-svc`:
+Edit `kong-snapshot.yaml` and add a `correlation-id` plugin to `bookstore-service`:
 
 ```yaml
 services:
-  - name: flights-svc
-    host: httpbin.konghq.com
+  - name: bookstore-service
+    host: httpbun.com
     port: 443
     protocol: https
     plugins:
@@ -412,7 +412,7 @@ deck gateway sync \
 Verify it's live:
 
 ```bash
-curl -s -I http://localhost:8000/flights \
+curl -s -I http://localhost:8000/bookstore \
   -H "X-API-Key: web-app-secret-key-001" | grep X-Request-ID
 ```
 
@@ -478,7 +478,7 @@ Create a file `new-service.yaml`:
 _format_version: "3.0"
 services:
   - name: weather-svc
-    host: httpbin.konghq.com
+    host: httpbun.com
     port: 443
     protocol: https
     routes:
@@ -523,7 +523,7 @@ Since `apply` never deletes, multiple teams can independently apply their own co
 echo '_format_version: "3.0"
 services:
 - name: test-svc
-  url: http://httpbin.konghq.com
+  url: http://httpbun.com
   routes:
   - name: test-route
     paths:
@@ -536,7 +536,7 @@ Or with Konnect:
 echo '_format_version: "3.0"
 services:
 - name: test-svc
-  url: http://httpbin.konghq.com
+  url: http://httpbun.com
   routes:
   - name: test-route
     paths:
@@ -574,7 +574,7 @@ Create a file `bad-config.yaml` with an invalid plugin:
 _format_version: "3.0"
 services:
   - name: test-validate
-    url: http://httpbin.konghq.com
+    url: http://httpbun.com
     plugins:
       - name: rate-limiting
         config:
