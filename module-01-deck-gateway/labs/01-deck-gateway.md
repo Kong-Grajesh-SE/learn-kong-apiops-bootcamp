@@ -33,7 +33,8 @@ export KONNECT_TOKEN="kpat_your_token_here"
 ### On-prem Kong
 
 ```bash
-deck gateway ping --kong-addr http://localhost:8001
+deck gateway ping --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME"
 ```
 
 ### Konnect
@@ -66,7 +67,8 @@ Run `deck gateway ping` any time you're troubleshooting connectivity - wrong URL
 ### Take your first snapshot
 
 ```bash
-deck gateway dump --kong-addr http://localhost:8001 \
+deck gateway dump --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   -o kong-snapshot.yaml
 ```
 
@@ -127,7 +129,7 @@ upstreams:
     targets:
       - target: httpbun.com:443
         weight: 100
-      - target: __KEEP_HTTPBUN_ORG__:443
+      - target: httpbin.org:443
         weight: 50
 ```
 
@@ -139,17 +141,20 @@ decK exports Services, Routes, Plugins, Consumers, Upstreams, Targets, Certifica
 
 ```bash
 # Skip consumers (useful when consumers are managed separately)
-deck gateway dump --kong-addr http://localhost:8001 \
+deck gateway dump --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --skip-consumers \
   -o kong-no-consumers.yaml
 
 # Include entity IDs (useful for debugging)
-deck gateway dump --kong-addr http://localhost:8001 \
+deck gateway dump --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --with-id \
   -o kong-with-ids.yaml
 
 # Sanitized dump - safe to share (hashes sensitive values)
-deck gateway dump --kong-addr http://localhost:8001 \
+deck gateway dump --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --sanitize \
   -o kong-sanitized.yaml
 ```
@@ -197,7 +202,8 @@ diff <(grep "key:" kong-snapshot.yaml) <(grep "key:" kong-sanitized.yaml)
 ### Diff with no changes
 
 ```bash
-deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 ```
 
 Or with Konnect:
@@ -225,13 +231,14 @@ Edit `kong-snapshot.yaml` and modify the `bookstore-service` host:
 ```yaml
 services:
   - name: bookstore-service
-    host: __KEEP_HTTPBUN_ORG__          # was: httpbun.com
+    host: httpbin.org          # was: httpbun.com
 ```
 
 Now diff:
 
 ```bash
-deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 ```
 
 Or with Konnect:
@@ -250,7 +257,7 @@ updating service bookstore-service  {
    "connect_timeout": 60000,
    "enabled": true,
 -  "host": "httpbun.com",
-+  "host": "__KEEP_HTTPBUN_ORG__",
++  "host": "httpbin.org",
    "name": "bookstore-service",
    ...
  }
@@ -268,7 +275,8 @@ The diff shows exactly what will happen if you sync. If you see unexpected delet
 ### JSON output for scripting
 
 ```bash
-deck gateway diff --kong-addr http://localhost:8001 \
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --json-output \
   kong-snapshot.yaml
 ```
@@ -287,18 +295,20 @@ This produces structured JSON with `old` and `new` values for each change - usef
 
 ### Diff as drift detection
 
-Revert your edit (change `__KEEP_HTTPBUN_ORG__` back to `httpbun.com`), then make a change directly in Kong:
+Revert your edit (change `httpbin.org` back to `httpbun.com`), then make a change directly in Kong:
 
 ```bash
 # Change something via Admin API
-curl -s -X PATCH http://localhost:8001/services/bookstore-service \
+curl -s -X PATCH -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/services/bookstore-service \
   -d "retries=3"
 ```
 
 Now diff:
 
 ```bash
-deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 ```
 
 Or with Konnect:
@@ -339,10 +349,12 @@ decK will show the drift - Kong's live state no longer matches your file. This i
 
 ```bash
 # Step A: Always preview first
-deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 
 # Step B: Only sync when the diff looks right
-deck gateway sync --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 ```
 
 Or with Konnect:
@@ -387,10 +399,12 @@ Preview and apply:
 
 ```bash
 # Preview
-deck gateway diff --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 
 # Apply
-deck gateway sync --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 ```
 
 Or with Konnect:
@@ -421,11 +435,13 @@ curl -s -I http://localhost:8000/bookstore \
 decK merges multiple files before syncing. This lets you split config by concern:
 
 ```bash
-deck gateway sync --kong-addr http://localhost:8001 \
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   services.yaml consumers.yaml plugins.yaml
 
 # Or sync an entire directory
-deck gateway sync --kong-addr http://localhost:8001 \
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   config-dir/*.yaml
 ```
 
@@ -491,7 +507,8 @@ services:
 Apply it:
 
 ```bash
-deck gateway apply --kong-addr http://localhost:8001 new-service.yaml
+deck gateway apply --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" new-service.yaml
 ```
 
 Or with Konnect:
@@ -507,10 +524,12 @@ Verify:
 
 ```bash
 # The new service exists
-curl -s http://localhost:8001/services/weather-svc | jq .name
+curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/services/weather-svc | jq .name
 
 # All your old services are still there
-curl -s http://localhost:8001/services | jq '.data[].name'
+curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/services | jq '.data[].name'
 ```
 
 ::: tip apply is safe for shared environments
@@ -527,7 +546,8 @@ services:
   routes:
   - name: test-route
     paths:
-    - /test' | deck gateway apply --kong-addr http://localhost:8001
+    - /test' | deck gateway apply --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME"
 ```
 
 Or with Konnect:
@@ -554,7 +574,8 @@ services:
 **What it does:** Validates your YAML against the live Kong Admin API schema. Unlike `deck file validate` (which checks locally), this catches errors that only the running Kong version knows about - invalid plugin config, unsupported fields, etc.
 
 ```bash
-deck gateway validate --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway validate --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 ```
 
 Or with Konnect:
@@ -583,7 +604,8 @@ services:
 ```
 
 ```bash
-deck gateway validate --kong-addr http://localhost:8001 bad-config.yaml
+deck gateway validate --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" bad-config.yaml
 ```
 
 Or with Konnect:
@@ -618,7 +640,8 @@ You'll see an error from the Admin API explaining the invalid value.
 
 ```bash
 # Will prompt for confirmation
-deck gateway reset --kong-addr http://localhost:8001
+deck gateway reset --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME"
 ```
 
 Or with Konnect:
@@ -633,7 +656,8 @@ You can scope the reset to only tagged entities:
 
 ```bash
 # Only delete entities tagged "lab-temp"
-deck gateway reset --kong-addr http://localhost:8001 \
+deck gateway reset --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag lab-temp
 ```
 
@@ -649,7 +673,8 @@ deck gateway reset \
 After a reset, verify Kong is empty:
 
 ```bash
-curl -s http://localhost:8001/services | jq '.data | length'
+curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/services | jq '.data | length'
 # 0
 ```
 
@@ -658,7 +683,8 @@ curl -s http://localhost:8001/services | jq '.data | length'
 This is why you took a dump in Step 2:
 
 ```bash
-deck gateway sync --kong-addr http://localhost:8001 kong-snapshot.yaml
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" kong-snapshot.yaml
 ```
 
 Or with Konnect:
@@ -673,7 +699,8 @@ deck gateway sync \
 Verify everything is back:
 
 ```bash
-curl -s http://localhost:8001/services | jq '.data[].name'
+curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/services | jq '.data[].name'
 ```
 
 **✅ Checkpoint.** You've reset Kong, restored from a snapshot, and understand why `deck gateway dump` is your safety net.

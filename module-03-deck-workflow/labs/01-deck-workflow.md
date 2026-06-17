@@ -19,7 +19,8 @@ Start by capturing the current state and splitting it into team-owned files.
 ### Dump the current state
 
 ```bash
-deck gateway dump --kong-addr http://localhost:8001 -o full-state.yaml
+deck gateway dump --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" -o full-state.yaml
 ```
 
 Or with Konnect:
@@ -121,12 +122,14 @@ Now each team can work independently.
 deck file validate platform/global.yaml
 
 # Check what would change (scoped to team-platform tags)
-deck gateway diff --kong-addr http://localhost:8001 \
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-platform \
   platform/global.yaml
 
 # Apply only platform-owned entities
-deck gateway sync --kong-addr http://localhost:8001 \
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-platform \
   platform/global.yaml
 ```
@@ -156,12 +159,14 @@ deck gateway sync \
 deck file validate travel/services.yaml
 
 # Preview
-deck gateway diff --kong-addr http://localhost:8001 \
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore \
   travel/services.yaml
 
 # Apply only travel-owned entities
-deck gateway sync --kong-addr http://localhost:8001 \
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore \
   travel/services.yaml
 ```
@@ -188,7 +193,8 @@ deck gateway sync \
 
 ```bash
 # Both teams' entities coexist
-curl -s http://localhost:8001/services | jq '.data[].name'
+curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/services | jq '.data[].name'
 # bookstore-service, inventory-service (team-bookstore)
 # ...plus any other services (untagged or other teams)
 
@@ -275,7 +281,8 @@ deck file lint -s travel/services.yaml travel/ruleset.yaml
 ### 4. Preview the diff
 
 ```bash
-deck gateway diff --kong-addr http://localhost:8001 \
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore \
   travel/services.yaml
 ```
@@ -306,7 +313,8 @@ Summary:
 ### 5. Apply
 
 ```bash
-deck gateway sync --kong-addr http://localhost:8001 \
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore \
   travel/services.yaml
 ```
@@ -362,7 +370,8 @@ deck file add-plugins \
 ```bash
 deck file validate travel-with-plugins.yaml
 
-deck gateway diff --kong-addr http://localhost:8001 \
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore \
   travel-with-plugins.yaml
 ```
@@ -395,7 +404,8 @@ Review the rendered output - this is exactly what will be sent to Kong.
 
 ```bash
 # Dump only your team's entities
-deck gateway dump --kong-addr http://localhost:8001 \
+deck gateway dump --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore \
   -o travel-backup-$(date +%Y%m%d).yaml
 ```
@@ -414,7 +424,8 @@ deck gateway dump \
 
 ```bash
 # Delete only travel team entities
-deck gateway reset --kong-addr http://localhost:8001 \
+deck gateway reset --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore
 ```
 
@@ -430,21 +441,24 @@ deck gateway reset \
 Verify they're gone:
 
 ```bash
-curl -s http://localhost:8001/services/bookstore-service
+curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/services/bookstore-service
 # 404
 ```
 
 But platform entities are untouched:
 
 ```bash
-curl -s http://localhost:8001/consumers | jq '.data[].username'
+curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/consumers | jq '.data[].username'
 # web-app, mobile-app (still there)
 ```
 
 ### Restore
 
 ```bash
-deck gateway sync --kong-addr http://localhost:8001 \
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore \
   travel-backup-*.yaml
 ```
@@ -460,7 +474,8 @@ deck gateway sync \
 ```
 
 ```bash
-curl -s http://localhost:8001/services | jq '.data[].name'
+curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://$KONNECT_REGION.api.konghq.com/v2/control-planes/$CP_ID/core-entities/services | jq '.data[].name'
 # bookstore-service, inventory-service, payments-service - restored
 ```
 

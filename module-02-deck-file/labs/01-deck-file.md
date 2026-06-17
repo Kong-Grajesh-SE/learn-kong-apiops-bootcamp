@@ -13,7 +13,8 @@
 Make sure you have `kong-snapshot.yaml` from Lab 01. If not, dump it now:
 
 ```bash
-deck gateway dump --kong-addr http://localhost:8001 -o kong-snapshot.yaml
+deck gateway dump --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" -o kong-snapshot.yaml
 ```
 
 Or with Konnect:
@@ -386,7 +387,7 @@ deck file render env-config.yaml --populate-env-vars
 deck file patch \
   -s kong-snapshot.yaml \
   --selector '$.services[?(@.name=="bookstore-service")]' \
-  --value 'host:__KEEP_HTTPBUN_ORG__' \
+  --value 'host:httpbin.org' \
   -o patched.yaml
 ```
 
@@ -499,12 +500,14 @@ Tags unlock `--select-tag` on gateway commands:
 
 ```bash
 # Only sync entities tagged "team-bookstore"
-deck gateway sync --kong-addr http://localhost:8001 \
+deck gateway sync --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-bookstore \
   travel-config.yaml
 
 # Only diff entities tagged "team-platform"
-deck gateway diff --kong-addr http://localhost:8001 \
+deck gateway diff --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME" \
   --select-tag team-platform \
   platform-config.yaml
 ```

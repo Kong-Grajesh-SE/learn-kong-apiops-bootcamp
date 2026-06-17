@@ -34,7 +34,8 @@ deck version
 # Should show v1.43 or higher
 
 # Kong connectivity (on-prem)
-deck gateway ping --kong-addr http://localhost:8001
+deck gateway ping --konnect-token $KONNECT_TOKEN \
+  --konnect-control-plane-name "$CP_NAME"
 
 # Or Konnect connectivity
 export KONNECT_TOKEN="kpat_..."
