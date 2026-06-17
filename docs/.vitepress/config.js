@@ -56,6 +56,7 @@ export default defineConfig({
         items: [
           { text: '✅ Prerequisites', link: '/prerequisites' },
           { text: '📄 Bookstore API Spec', link: '/api-specs' },
+          { text: '📦 Lab Resources', link: '/resources' },
         ],
       },
       {
@@ -84,6 +85,7 @@ export default defineConfig({
         items: [
           { text: '✅ Prerequisites', link: '/prerequisites' },
           { text: '📄 Bookstore API Spec', link: '/api-specs' },
+          { text: '📦 Lab Resources', link: '/resources' },
         ],
       },
       {
