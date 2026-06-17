@@ -28,6 +28,7 @@ export default defineConfig({
     '.vitepress-cache/**',
     'README.md',
     '.github/**',
+    'resources/**',
   ],
 
   head: [
