@@ -533,4 +533,4 @@ curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
 
 ---
 
-*Lab 03 complete. [← Back to Module Overview](/module-01-apiops/)*
+*Lab 03 complete. [← Back to Module Overview](/)*

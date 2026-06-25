@@ -566,4 +566,4 @@ In a multi-team setup: each team tags their entities. `--select-tag` ensures `de
 
 ---
 
-*Lab 02 complete. Next: [Lab 03 - Putting it all together →](/module-01-apiops/labs/03-deck-workflow)*
+*Lab 02 complete. Next: [Lab 03 - Putting it all together →](/module-03-deck-workflow/labs/01-deck-workflow)*

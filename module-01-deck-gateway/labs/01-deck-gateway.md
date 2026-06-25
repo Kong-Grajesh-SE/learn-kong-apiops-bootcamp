@@ -729,4 +729,4 @@ curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
 
 ---
 
-*Lab 01 complete. Next: [Lab 02 - deck file commands →](/module-01-apiops/labs/02-deck-file)*
+*Lab 01 complete. Next: [Lab 02 - deck file commands →](/module-02-deck-file/labs/01-deck-file)*

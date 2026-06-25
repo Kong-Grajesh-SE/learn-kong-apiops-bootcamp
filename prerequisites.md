@@ -59,4 +59,4 @@ export KONNECT_TOKEN="kpat_your_token_here"
 
 ---
 
-*Ready? Start with [Lab 01 - deck gateway commands →](/module-01-apiops/labs/01-deck-gateway)*
+*Ready? Start with [Lab 01 - deck gateway commands →](/module-01-deck-gateway/labs/01-deck-gateway)*
