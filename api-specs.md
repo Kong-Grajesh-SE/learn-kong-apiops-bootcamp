@@ -297,7 +297,7 @@ components:
 
 ## Convert to Kong config with decK
 
-This is the key APIOps command — generate Kong Gateway configuration directly from this spec:
+This is the key APIOps command - generate Kong Gateway configuration directly from this spec:
 
 ```bash
 deck file openapi2kong -s bookstore-api.yaml -o kong.yaml
